@@ -3,100 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Latihan Ganjil Genap</title>
+    <title>Ganjil Genap</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; }
+        #container { max-width: 600px; margin: auto; }
         .hidden { display: none; }
-        .question { margin: 20px 0; font-size: 20px; }
+        .question { text-align: left; margin: 10px 0; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; }
+        canvas { margin-top: 20px; }
     </style>
 </head>
 <body>
+
     <h1>Latihan Ganjil Genap</h1>
-    <div id="quiz-container">
-        <h2>Bagian <span id="section-number">1</span> dari 20</h2>
-        <div id="timer">60</div>
-        <div id="question-container"></div>
-        <button onclick="nextSection()">Lewati Bagian</button>
+    <div id="startScreen">
+        <button onclick="startTest()">Mulai Latihan</button>
     </div>
-    <div id="result-container" class="hidden">
-        <h2>Hasil Skor</h2>
+
+    <div id="testScreen" class="hidden">
+        <h2 id="sectionTitle">Bagian 1</h2>
+        <p id="timer">Sisa Waktu: 60 detik</p>
+        <form id="quizForm"></form>
+        <button onclick="nextSection()">Lanjut</button>
+    </div>
+
+    <div id="resultScreen" class="hidden">
+        <h2>Hasil Akhir</h2>
         <canvas id="scoreChart"></canvas>
     </div>
+
     <script>
         let currentSection = 1;
+        let totalSections = 20;
         let scores = [];
+        let timer;
         let timeLeft = 60;
-        let timerInterval;
 
-        function generateQuestions() {
-            let container = document.getElementById("question-container");
-            container.innerHTML = "";
-            for (let i = 0; i < 100; i++) {
-                let num = Math.floor(Math.random() * 1000);
-                let question = document.createElement("div");
-                question.classList.add("question");
-                question.innerHTML = `Apakah ${num} ganjil atau genap? 
-                    <button onclick="checkAnswer(${num}, true, this)">Ganjil</button>
-                    <button onclick="checkAnswer(${num}, false, this)">Genap</button>`;
-                container.appendChild(question);
-            }
-        }
-        
-        function checkAnswer(number, isOdd, button) {
-            let correct = (number % 2 !== 0) === isOdd;
-            if (correct) {
-                button.style.backgroundColor = "green";
-                scores[currentSection - 1] = (scores[currentSection - 1] || 0) + 1;
-            } else {
-                button.style.backgroundColor = "red";
-            }
-        }
-
-        function startTimer() {
-            timeLeft = 60;
-            document.getElementById("timer").textContent = timeLeft;
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                document.getElementById("timer").textContent = timeLeft;
-                if (timeLeft === 0) {
-                    clearInterval(timerInterval);
-                    nextSection();
-                }
-            }, 1000);
-        }
-
-        function nextSection() {
-            if (currentSection >= 20) {
-                showResults();
-                return;
-            }
-            currentSection++;
-            document.getElementById("section-number").textContent = currentSection;
+        function startTest() {
+            document.getElementById("startScreen").classList.add("hidden");
+            document.getElementById("testScreen").classList.remove("hidden");
             generateQuestions();
             startTimer();
         }
 
-        function showResults() {
-            document.getElementById("quiz-container").classList.add("hidden");
-            document.getElementById("result-container").classList.remove("hidden");
-            let ctx = document.getElementById("scoreChart").getContext("2d");
-            new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: Array.from({ length: 20 }, (_, i) => `Bagian ${i + 1}`),
-                    datasets: [{
-                        label: "Skor",
-                        data: scores,
-                        backgroundColor: "blue"
-                    }]
-                }
-            });
-        }
-
-        generateQuestions();
-        startTimer();
-    </script>
-</body>
-</html>
+        function generateQuestions() {
+            const quizForm = document.getElementById("quizForm");
+            quizForm.innerHTML = "";
+            for (let i = 1; i <= 100;
